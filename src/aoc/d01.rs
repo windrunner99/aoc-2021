@@ -1,3 +1,5 @@
+use crate::aoc::common::AoC;
+
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
@@ -6,31 +8,31 @@ pub struct DayOne {
 }
 
 impl DayOne {
-    pub fn new() -> DayOne {
+    pub fn new() -> Box<dyn AoC> {
         let mut values: Vec<i32> = Vec::new();
 
         let file = File::open("data/d01.txt").unwrap();
-        let mut buf_reader = BufReader::new(file);
+        let lines = BufReader::new(file).lines();
 
-        loop {
-            let mut value = String::new();
-            match buf_reader.read_line(&mut value) {
-                Ok(_) => {}
-                Err(_) => { break; }
+        for line in lines{
+            let line = match line {
+                Ok(l) => l,
+                Err(_) => continue,
             };
-
-            match value.trim().parse() {
+            match line.trim().parse() {
                 Ok(t) => values.push(t),
-                Err(_) => { break; },
+                Err(_) => continue,
             };
         }
 
-        DayOne {
+        Box::new(DayOne {
             values
-        }
+        })
     }
+}
 
-    pub fn one(&self) -> i32 {
+impl AoC for DayOne {
+    fn one(&self) -> i32 {
         let mut old_value: i32 = 0;
         let mut count: i32 = -1;
 
@@ -44,7 +46,7 @@ impl DayOne {
         count
     }
 
-    pub fn two(&self) -> i32 {
+    fn two(&self) -> i32 {
         let mut cursor: Vec<i32> = Vec::new();
 
         let mut old_sum: i32 = 0;
